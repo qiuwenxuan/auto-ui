@@ -24,7 +24,7 @@ def test_login_mail(username, password, result, login):
 
     driver.find_element(By.XPATH, '//*[@placeholder="输入密码"]').clear()
     driver.find_element(By.XPATH, '//*[@placeholder="输入密码"]').send_keys(password)
-    logger.info(f"输入账户和密码username:{username}\npassword:{password}")
+    logger.info(f"输入账户和密码username:{username} password:{password}")
 
     # 点击登录确定
     driver.find_element(By.XPATH, '//*[@id="dologin"]').click()

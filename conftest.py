@@ -9,7 +9,7 @@ logger = setup_logger()
 wait_time = 20
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="class")
 def login():
     """初始化Chrome浏览器驱动"""
     chrome_options = webdriver.ChromeOptions()
