@@ -29,3 +29,7 @@ def setup_logger(default_path=LOG_PATH, default_output=LOG_INPUT_DIR, default_le
         logging.basicConfig(level=default_level)
         logging.info(f"警告: 找不到日志配置文件 {default_path}。使用默认logging日志对象。")
         return logging
+
+
+# 实例化日志器
+logger = setup_logger()

@@ -9,7 +9,7 @@ formatters:
 handlers:
   console_handler:
     class: logging.StreamHandler
-    level: DEBUG
+    level: INFO
     formatter: simple
     stream: ext://sys.stdout
   file_handler:
@@ -17,15 +17,14 @@ handlers:
     level: INFO
     formatter: detailed
     filename: ../logs/info.log
-    mode: 'w'
     maxBytes: 10485760
     backupCount: 20
     encoding: utf-8
 loggers:
   logger:
-    level: INFO
+    level: DEBUG
     handlers: [ console_handler,file_handler ]
     propagate: no # 关闭日志传播给父handler
 root:
-  level: INFO
+  level: DEBUG
   handlers: [ console_handler,file_handler ]
