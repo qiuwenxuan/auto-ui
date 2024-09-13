@@ -1,9 +1,9 @@
 import os
 from datetime import datetime
 
-"""全局常量global constants"""
+"""global path"""
 # 工作目录
-WORKSPACE = os.getcwd()
+WORKSPACE_DIR = os.getcwd()
 # 当前脚本路径
 CURRENT_PATH = os.path.abspath(__file__)
 # 项目根目录
@@ -14,13 +14,15 @@ REPORT_DIR = os.path.join(ROOT_DIR, 'report')
 LOG_INPUT_DIR = os.path.join(ROOT_DIR, 'logs')
 # 输出日志文件目录
 LOG_PATH = os.path.join(ROOT_DIR, 'config', 'logger.yaml')
+# 配置文件路径
+CONF_PATH = os.path.join(ROOT_DIR, 'config', 'config.yaml')
 # 测试数据所在目录
 DATA_PATH = os.path.join(ROOT_DIR, 'data', 'tcData.xlsx')
 # 当前时间
 CURRENT_TIME = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 if __name__ == '__main__':
-    print("工作目录:" + WORKSPACE)
+    print("工作目录:" + WORKSPACE_DIR)
     print("当前脚本路径:" + CURRENT_PATH)
     print("项目根目录:" + ROOT_DIR)
     print("测试报告目录:" + REPORT_DIR)
@@ -28,3 +30,4 @@ if __name__ == '__main__':
     print("输出日志文件目录:" + LOG_INPUT_DIR)
     print("测试数据所在目录:" + DATA_PATH)
     print("当前时间:" + CURRENT_TIME)
+

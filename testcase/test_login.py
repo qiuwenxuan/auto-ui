@@ -1,17 +1,17 @@
 import pytest
 from selenium.webdriver.common.by import By
 
-from common.selenium_co import ele_click, ele_send_key, get_ele_text
-from conftest import login, logger
+from operation.selenium_co import ele_click, ele_send_key, get_ele_text
+from conftest import open_page, logger
 
 
 @pytest.mark.parametrize('username,password,result', [('qwx13057573527', 'qwx#125617', 'qwx13057573527'),
                                                       ('qwx', 'qwx#125617', '用户名错误'),
                                                       ('qwx13057573527', 'qwx', '密码错误')],
                          ids=('test_login_001', 'test_login_002', 'test_login_003'))
-def test_login(username, password, result, login):
+def test_login(username, password, result, open_page):
     # 获取驱动
-    driver = login
+    driver = open_page
 
     # 输入账户和密码
     ele_send_key(driver, (By.XPATH, '//*[@placeholder="请输入用户名"]'), username)
