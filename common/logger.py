@@ -3,6 +3,8 @@ import os
 
 import yaml
 
+from data.constant import LOG_PATH, LOG_INPUT_DIR
+
 
 def setup_logger(default_path=LOG_PATH, default_output=LOG_INPUT_DIR, default_level=logging.INFO):
     r"""

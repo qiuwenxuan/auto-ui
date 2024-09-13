@@ -3,9 +3,9 @@ import time
 import pytest
 from selenium import webdriver
 
-from data.constant import ENV, SQL
 from common.logger import logger
-from common.sql import sqlObject
+from common.sql import sm
+from data.conf import SQL_LIST, URL, USERNAME, PASSWORD
 from po.event import Event
 
 # 定义全局常量
@@ -43,15 +43,15 @@ def login():
     driver = webdriver.Chrome(options=chrome_options)
     logger.info(f"启用隐私模式加载浏览器驱动")
     # 初始化测试数据
-    sqlObject.execute(SQL.SQL_LIST)
+    sm.execute(SQL_LIST)
     logger.info(f"初始化测试数据")
     # 打开浏览器网址
     driver.maximize_window()
     logger.info("打开浏览器界面")
-    driver.get(ENV.URL)
-    logger.info(f"打开网址 url:{ENV.URL}")
+    driver.get(URL)
+    logger.info(f"打开网址 url:{URL}")
     # 登录网站
-    Event().login(driver, ENV.USERNAME, ENV.PASSWORD)
+    Event().login(driver, USERNAME, PASSWORD)
     # 设置等待时间
     driver.implicitly_wait(wait_time)
     logger.info(f"设置隐式等待时间为{wait_time}s")

@@ -1,7 +1,6 @@
 from selenium.webdriver.common.by import By
 
 from common.logger import logger
-from operation.selenium_co import ele_send_key, ele_click
 from common.utils import xpath_tuple
 
 
