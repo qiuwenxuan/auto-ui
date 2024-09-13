@@ -4,7 +4,7 @@ import pytest
 from selenium import webdriver
 
 from common.logger import logger
-from common.sql import sm
+from common.sql_manager import sm
 from data.conf import SQL_LIST, URL, USERNAME, PASSWORD
 from po.event import Event
 

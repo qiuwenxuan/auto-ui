@@ -7,8 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from common.logger import logger
-from common.sql import sqlObject
-from data.constant import SQL
+from common.sql_manager import sm
+from data.conf import SQL_LIST
 
 
 class BasePage(object):
@@ -23,7 +23,7 @@ class BasePage(object):
             self.driver.implicitly_wait(10)
             logger.info(f"启用隐私模式加载浏览器驱动")
             # 初始化测试数据
-            sqlObject.execute(SQL.SQL_LIST)
+            sm.execute(SQL_LIST)
             logger.info(f"初始化测试数据")
 
     @allure.step('鼠标左键点击')

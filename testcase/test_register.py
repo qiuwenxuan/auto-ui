@@ -26,7 +26,7 @@ def test_register(username, password, email, open_page):
     ele_click(driver, xpath_tuple('//*[@class="reg_sub"]/*[@value="注 册"]'))
 
     # 断言1：判断数据库表df_user_userinfo内是否存在username
-    from common.sql import sqlObject
+    from common.sql_manager import sqlObject
     result = sqlObject.execute([f"SELECT uname FROM df_user_userinfo WHERE uname='{username}'"])
     logger.info(f"assert值：【{result}】")
     assert username in str(result)
