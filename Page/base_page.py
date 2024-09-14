@@ -2,17 +2,31 @@ import re
 from time import sleep
 
 import allure
-from selenium.webdriver.ie.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
+from common.driver_manager import chromeManager
 from common.logger import logger
 
 
-class BasePage(object):
+class BasePage:
+    def __init__(self, driver):
+        """
+        初始化 BasePage 对象。
 
-    def __init__(self, driver: WebDriver):
+        @param driver: Selenium WebDriver 实例。
+        """
         self.driver = driver
+
+    def wait_for_element(self, sel, timeout=20):
+        """
+        显示等待指定元素的出现。
+
+        @param sel: 定位元素的选择器（可以是 By 选择器、XPath 等）。
+        @param timeout: 等待时间，单位为秒，默认为 20 秒。
+        @return: 返回等待到的元素。
+        """
+        return WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(sel))
 
     @allure.step('鼠标左键点击')
     def ele_click(self, sel, timeout=20):
@@ -24,12 +38,12 @@ class BasePage(object):
         @return: 如果操作成功，返回 True。
         """
         try:
-            # 显示等待
-            WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(sel)).click()
+            element = self.wait_for_element(sel, timeout)
+            element.click()
             sleep(0.2)
             selen = re.sub('[^\u4e00-\u9fa5]+', '', str(sel))
-            if len(selen) > 0:
-                logger.info(f"点击：【{selen}】")
+            if selen:
+                logger.info(f"点击：{selen}")
             return True
         except Exception as e:
             logger.error(f"无法定位到元素：{sel}，出现异常：\n{e}")
@@ -46,15 +60,14 @@ class BasePage(object):
         @return: 如果操作成功，返回 True。
         """
         try:
-            # 清除输入框
-            WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(sel)).clear()
+            element = self.wait_for_element(sel, timeout)
+            element.clear()
             sleep(0.2)
-            # 输入内容
-            WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(sel)).send_keys(value)
+            element.send_keys(value)
             sleep(0.2)
             selen = re.sub('[^\u4e00-\u9fa5]+', '', str(sel))
-            if len(selen) > 0:
-                logger.info(f"点击：【{selen}】，输入值：【{value}】")
+            if selen:
+                logger.info(f"点击：{selen}，输入值：{value}")
             return True
         except Exception as e:
             logger.error(f"无法定位到元素：{sel}，出现异常：\n{e}")
@@ -71,14 +84,22 @@ class BasePage(object):
         @return: 返回元素的文本值。如果 `mod` 为 True，返回 `textContent` 属性值，否则返回 `text` 属性值。
         """
         try:
-            # 显示等待
-            element = WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable(sel))
-            if not mod:
-                logger.info(f"元素text:【{element.text}】")
-                return element.text
-            else:
-                logger.info(f"元素textContent:【{element.get_attribute('textContent')}】")
-                return element.get_attribute('textContent')
+            element = self.wait_for_element(sel, timeout)
+            text = element.get_attribute('textContent') if mod else element.text
+            logger.info(f"元素text{':textContent' if mod else ''}: {text}")
+            return text
         except Exception as e:
             logger.error(f"出现异常：\n{e}")
             raise e
+
+
+if __name__ == '__main__':
+    chromeManager.driver
+    basePage = BasePage()
+
+    logger.info(basePage)
+    driver = basePage.driver
+    sleep(2)  # 可以调整等待时间
+
+    # 确保退出时关闭 WebDriver
+    driver.quit()

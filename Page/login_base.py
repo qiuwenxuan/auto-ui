@@ -1,31 +1,41 @@
+from time import sleep
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.ie.webdriver import WebDriver
 
 from Page.base_page import BasePage
-from common.driver_manager import DriverManager
+from common.driver_manager import chromeManager
 from common.logger import logger
+from data.config import Config as C
 
 
 class LoginPage(BasePage):
-    sel_username_input = (By.XPATH, '//*[@placeholder="请输入用户名"]')
-    sel_password_input = (By.XPATH, '//*[@placeholder="请输入密码"]')
-    sel_login_button = (By.XPATH, '//input[@value="登录"]')
-    sel_register_button = (By.XPATH, '//a[@href|text()="立即注册"]')
+    username_input = (By.XPATH, C.username_input)
+    password_input = (By.XPATH, C.password_input)
+    login_button = (By.XPATH, C.login_button)
+    register_button = (By.XPATH, C.register_button)
 
     def __init__(self, driver: WebDriver = None):
         super().__init__(driver)
-        driver.get(LOGIN_URL)
+        driver.get(C.login_url)
 
-    def login(self, username, password):
-        # 输入账户和密码
-        logger.info(f"登录界面，执行登录操作")
-        self.ele_send_key(self.driver, self.sel_username_input, username)
-        self.ele_send_key(self.driver, self.sel_password_input, password)
+    def login(self, username: str, password: str):
+        """
+        执行登录操作。
+        @param username: 用户名。
+        @param password: 密码。
+        """
+        logger.info("登录界面，执行登录操作")
+        self.ele_send_key(self.username_input, username)
+        self.ele_send_key(self.password_input, password)
+        self.ele_click(self.login_button)
 
-        # 点击登录
-        self.ele_click(self.driver, self.sel_login_button)
 
-
+loginPage = LoginPage(chromeManager.driver)
 if __name__ == '__main__':
-    driver = DriverManager.get_edgedriver()
-    login_page = LoginPage(driver)
+    driver = loginPage.driver
+    logger.info(driver)
+    sleep(10)  # 可以调整等待时间
+
+    # 确保退出时关闭 WebDriver
+    driver.quit()

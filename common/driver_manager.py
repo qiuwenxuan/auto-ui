@@ -1,47 +1,71 @@
+from enum import Enum
+from time import sleep
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
-from data.constant import CHROME_PATH, EDGE_PATH
+from common.logger import logger
+from data.constant import Const
+
+
+class BrowserType(Enum):
+    CHROME = "chrome"
+    EDGE = "edge"
+
+
+# 设置别名 BT
+BT = BrowserType
 
 
 class DriverManager:
     """负责 WebDriver 的创建和销毁"""
 
-    @staticmethod
-    def get_chromedriver():
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_argument("--incognito")
-        # 创建 Service 对象，指定驱动程序的路径
-        s = Service(CHROME_PATH)
+    def __init__(self, browser_type: BT, wait_time: int = 10):
+        """
+        初始化 DriverManager，根据浏览器类型创建对应的 WebDriver 实例
+        @param browser_type: 浏览器类型 (BT.CHROME 或 BT.EDGE)
+        @param wait_time: 隐式等待时间，默认10秒
+        """
+        self.driver = self._create_driver(browser_type, wait_time)
 
-        # 使用 Service 对象创建 WebDriver 实例
-        driver = webdriver.Chrome(service=s, options=chrome_options)
-        driver.implicitly_wait(10)
+    def _create_driver(self, browser_type: BT, wait_time: int):
+        """
+        根据传入的浏览器类型创建 WebDriver 实例
+        @param browser_type: 浏览器类型 (BT 枚举)
+        @param wait_time: 隐式等待时间
+        @return: WebDriver对象
+        """
+        driver: webdriver = None
+        if browser_type == BT.CHROME:
+            chrome_options = webdriver.ChromeOptions()
+            chrome_options.add_argument("--incognito")
+            driver = webdriver.Chrome(service=Service(Const.CHROME_PATH), options=chrome_options)
+        elif browser_type == BT.EDGE:
+            edge_options = webdriver.EdgeOptions()
+            edge_options.add_argument("--incognito")
+            driver = webdriver.Edge(service=Service(Const.EDGE_PATH), options=edge_options)
+        else:
+            raise ValueError("Unsupported browser type. Please use BT.CHROME or BT.EDGE.")
+
+        logger.info(f"启动 {browser_type.value} 浏览器")
+        driver.maximize_window()
+        logger.info("最大化浏览器窗口")
+        driver.implicitly_wait(wait_time)
+        logger.info(f"设置隐式等待时间为 {wait_time}s")
         return driver
 
-    @staticmethod
-    def get_edgedriver():
-        edge_options = webdriver.EdgeOptions()
-        edge_options.add_argument("--incognito")
-        # 创建 Service 对象，指定驱动程序的路径
-        s = Service(EDGE_PATH)
 
-        # 使用 Service 对象创建 WebDriver 实例
-        driver = webdriver.Edge(service=s, options=edge_options)
-        driver.implicitly_wait(10)
-        return driver
-
-    @staticmethod
-    def quit_driver(driver):
-        driver.quit()
-
+# 设置默认为chromeDriver单例
+chromeManager = DriverManager(BT.CHROME)
+edgeManager = DriverManager(BT.EDGE)
 
 if __name__ == '__main__':
-    edgedriver = DriverManager.get_edgedriver()
-    print(edgedriver)
-    DriverManager.quit_driver(edgedriver)
+    driver = DriverManager(BT.CHROME).driver
+    logger.info(driver)
+    sleep(2)
+    driver.quit()
 
-    chromedriver = DriverManager.get_chromedriver()
-    print(chromedriver)
-    DriverManager.quit_driver(chromedriver)
-
+    driver = DriverManager(BT.EDGE).driver
+    logger.info(driver)
+    sleep(2)
+    driver.quit()

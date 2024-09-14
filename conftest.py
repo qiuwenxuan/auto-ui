@@ -1,31 +1,22 @@
 import time
 
 import pytest
-from selenium import webdriver
 
+from Page.login_base import LoginPage
+from common.driver_manager import chromeManager
 from common.logger import logger
-from data.config import LOGIN_URL, SQL_DELETE, SQL_INSERT
+from common.sql_manager import sm
+from data.config import Config as C
 
 
+@pytest.fixture(scope="module")
 def login():
-    """初始化Chrome浏览器驱动并登录到网站"""
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--incognito")  # 启用隐私模式
-    driver = webdriver.Chrome(options=chrome_options)
-    logger.info(f"启用隐私模式加载浏览器驱动")
-    # 初始化测试数据
-    from common.sql_manager import sm
-    sm.execute(SQL_DELETE)
-    sm.execute(SQL_INSERT)
-    logger.info(f"初始化测试数据")
+    # 初始化driver驱动
+    driver = chromeManager.driver
+    # 初始化测试环境
+    sm.setup_testenv()
     # 打开浏览器网址
-    driver.maximize_window()
-    logger.info("打开浏览器界面")
-    driver.get(LOGIN_URL)
-    logger.info(f"打开网址 url:{LOGIN_URL}")
-    # 设置等待时间
-    driver.implicitly_wait(20)
-    logger.info(f"设置隐式等待时间为{20}s")
+    LoginPage().login(C.username, C.password)
     yield driver
     # 关闭浏览器
     driver.quit()
@@ -53,37 +44,34 @@ def pytest_runtest_teardown(item):
     logger.info(
         f"测试用例 '{item.name}' 执行耗时: {duration:.4f} s")
 
-
 # 初始化清理测试数据
-def pytest_sessionstart(session):
-    """
-    在测试会话开始时初始化测试数据。
-    @param session: pytest的session对象
-    """
-    logger.info("测试会话开始，初始化测试数据")
-    # 执行 SQL 初始化脚本
-    try:
-        from common.sql_manager import sm
-        sm.execute(SQL_DELETE)
-        sm.execute(SQL_INSERT)
-        logger.info("测试数据初始化完成")
-    except Exception as e:
-        logger.error(f"初始化测试数据时发生错误: {e}")
-        raise e
-
-
-def pytest_sessionfinish(session, exitstatus):
-    """
-    在测试会话结束时进行必要的清理操作。
-    @param session: pytest的session对象
-    @param exitstatus: 测试执行状态码
-    """
-    logger.info("测试会话结束，清理测试数据")
-    try:
-        from common.sql_manager import sm
-        sm.execute(SQL_DELETE)
-        sm.execute(SQL_INSERT)
-        logger.info("测试数据清理完成")
-    except Exception as e:
-        logger.error(f"清理测试数据时发生错误: {e}")
-        raise e
+# def pytest_sessionstart(session):
+#     """
+#     在测试会话开始时初始化测试数据。
+#     @param session: pytest的session对象
+#     """
+#     logger.info("测试会话开始，初始化测试数据")
+#     # 执行 SQL 初始化脚本
+#     try:
+#         from common.sql_manager import sm
+#
+#         logger.info("测试数据初始化完成")
+#     except Exception as e:
+#         logger.error(f"初始化测试数据时发生错误: {e}")
+#         raise e
+#
+#
+# def pytest_sessionfinish(session, exitstatus):
+#     """
+#     在测试会话结束时进行必要的清理操作。
+#     @param session: pytest的session对象
+#     @param exitstatus: 测试执行状态码
+#     """
+#     logger.info("测试会话结束，清理测试数据")
+#     try:
+#         from common.sql_manager import sm
+#         sm.setup_testenv()
+#         logger.info("测试数据清理完成")
+#     except Exception as e:
+#         logger.error(f"清理测试数据时发生错误: {e}")
+#         raise e

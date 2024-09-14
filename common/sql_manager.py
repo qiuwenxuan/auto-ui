@@ -1,16 +1,16 @@
 import sqlite3
 
-from conftest import logger
+from common.logger import logger
 from data.config import Config
 
 
 class SQLManager(object):
-    def __init__(self):
+    def __init__(self, default_file=Config.sql_file):
         """连接到sql数据库"""
-        self.conn = sqlite3.connect(Config.sql_file)
+        self.conn = sqlite3.connect(default_file)
         # 创建一个游标
         self.cursor = self.conn.cursor()
-        logger.info(f"链接数据库文件:{Config.sql_file}")
+        logger.info(f"链接数据库文件:{default_file}")
 
     def __del__(self):
         """对象资源被释放时触发，在对象即将被删除时的最后操作"""
@@ -33,12 +33,17 @@ class SQLManager(object):
             logger.error(f"执行sql出现错误，异常为：{e}")
             raise e
 
+    def setup_testenv(self):
+        logger.info("正在初始化测试数据")
+        self.execute(Config.sql_delete)
+        self.execute(Config.sql_insert)
+        logger.info("初始化测试数据完成")
+
 
 sm = SQLManager()
 
 if __name__ == '__main__':
-    sm.execute(["SELECT * FROM df_user_userinfo"])
-    sm.execute(["SELECT uname FROM df_user_userinfo WHERE uname='wenxuan1'"])
+    sm.setup_testenv()
 
     # sm.execute(["DELETE FROM df_order_orderdetailinfo",
     #                "DELETE FROM df_order_orderinfo",
