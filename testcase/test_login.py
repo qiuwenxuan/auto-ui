@@ -1,8 +1,6 @@
 import pytest
 from selenium.webdriver.common.by import By
 
-from operation.selenium_co import ele_click, ele_send_key, get_ele_text
-from conftest import open_page, logger
 
 
 @pytest.mark.parametrize('username,password,result', [('qwx13057573527', 'qwx#125617', 'qwx13057573527'),

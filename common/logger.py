@@ -9,7 +9,7 @@ from data.constant import LOG_PATH, LOG_INPUT_DIR
 def setup_logger(default_path=LOG_PATH, default_output=LOG_INPUT_DIR, default_level=logging.INFO):
     r"""
     根据logger配置文件初始化自定义logger
-    @param default_path: 默认的日志配置文件路径。 C:\Users\v-williamqiu\Desktop\wx\workspace\auto-ui\config\logger.yaml
+    @param default_path: 默认的日志配置文件路径。 C:\Users\v-williamqiu\Desktop\wx\workspace\auto-ui\config\logger.config
     @param default_output: 默认日志输出路径 C:\Users\v-williamqiu\Desktop\wx\workspace\auto-ui\logs
     @param default_level: 如果没有提供配置文件，使用的默认日志级别。
     @return:

@@ -1,0 +1,22 @@
+env:
+  login_url: "http://127.0.0.1:8000/user/login/"
+  username: "qwx13057573527"
+  password: "qwx#125617"
+
+sql:
+  sql_file: "C:/Users/v-williamqiu/Desktop/wx/workspace/DailyFresh/daily_fresh_demo-master/db.sqlite3"
+  sql_delete:
+    - "DELETE FROM df_order_orderdetailinfo"
+    - "DELETE FROM df_order_orderinfo"
+    - "DELETE FROM df_user_userinfo"
+    - "DELETE FROM df_cart_cartinfo"
+  sql_insert:
+    - "INSERT INTO 'df_user_userinfo' VALUES(41, 'd0b70dd55b42b70af6069de0a8c0a51fd9d27171', 'qwx13057573527@163.com', '', '', '', '', 'qwx13057573527')"
+  sql_select:
+    - "SELECT * FROM df_user_userinfo"
+
+login_page:
+  username_input: '//*[@placeholder="请输入用户名"]'
+  password_input: '//*[@placeholder="请输入密码"]'
+  login_button: '//input[@value="登录"]'
+  register_button: '//a[@href|text()="立即注册"]'

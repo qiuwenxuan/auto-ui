@@ -1,16 +1,16 @@
 import sqlite3
 
 from conftest import logger
-from data.conf import SQL_FILE
+from data.config import Config
 
 
 class SQLManager(object):
     def __init__(self):
         """连接到sql数据库"""
-        self.conn = sqlite3.connect(SQL_FILE)
+        self.conn = sqlite3.connect(Config.sql_file)
         # 创建一个游标
         self.cursor = self.conn.cursor()
-        logger.info(f"链接数据库文件:{SQL_FILE}")
+        logger.info(f"链接数据库文件:{Config.sql_file}")
 
     def __del__(self):
         """对象资源被释放时触发，在对象即将被删除时的最后操作"""
@@ -25,7 +25,7 @@ class SQLManager(object):
                 logger.info(f"执行sql命令:{i}")
                 self.cursor.execute(i)
                 result = self.cursor.fetchall()
-                logger.info(f"执行结果为:{result}")
+                logger.debug(f"执行结果为:{result}")
             # 提交事务
             self.conn.commit()
             return result
@@ -37,7 +37,6 @@ class SQLManager(object):
 sm = SQLManager()
 
 if __name__ == '__main__':
-
     sm.execute(["SELECT * FROM df_user_userinfo"])
     sm.execute(["SELECT uname FROM df_user_userinfo WHERE uname='wenxuan1'"])
 

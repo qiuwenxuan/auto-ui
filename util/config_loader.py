@@ -2,11 +2,11 @@ import os
 
 import yaml
 
-from data.constant import CONF_PATH
+from data.constant import Const
 
 
 class ConfigLoader:
-    def __init__(self, config_file=CONF_PATH):
+    def __init__(self, config_file=Const.CONF_PATH):
         """
         初始化配置加载器，加载yaml配置文件
 
@@ -42,11 +42,12 @@ class ConfigLoader:
                 raise KeyError(f"配置项 {'.'.join(keys)} 不存在")
         return data
 
+
 confloader = ConfigLoader()
 # 使用示例
 if __name__ == "__main__":
     # 假设yaml文件路径是config.yaml
-    config_loader = ConfigLoader(CONF_PATH)
+    config_loader = ConfigLoader(Const.CONF_PATH)
 
     # 获取单个配置变量：例如获取用户名
     username = config_loader.get_value("env", "username")
