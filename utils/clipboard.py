@@ -9,7 +9,7 @@ class ClipBoard(object):
     def get_text():
         """获取剪切板的内容"""
         wc.OpenClipboard()
-        value = wc.GetClipboardData(win32con.CF_TEXT)
+        value = wc.GetClipboardData(win32con.CF_UNICODETEXT)
         wc.CloseClipboard()
         return value
 
@@ -23,4 +23,5 @@ class ClipBoard(object):
 
 
 if __name__ == '__main__':
-    pass
+    ClipBoard.set_text("你好")
+    print(str(ClipBoard.get_text()))
