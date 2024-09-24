@@ -9,25 +9,28 @@ from utils.parseConf import ParseConf
 class LoginPage(BasePage):
     parseConf = ParseConf()
     # 登录网站url
-    login_url = parseConf.get_value('Login', 'login_url')
+    login_url = parseConf.get_value("Login", "login_url")
     # 用户名输入框
-    username_input = parseConf.get_value('Login', 'username_input')
+    username_input = parseConf.get_value("Login", "username_input")
     # 密码输入框
-    password_input = parseConf.get_value('Login', 'password_input')
+    password_input = parseConf.get_value("Login", "password_input")
     # 登录按钮
-    login_button = parseConf.get_value('Login', 'login_button')
+    login_button = parseConf.get_value("Login", "login_button")
     # 注册按钮
-    register_button = parseConf.get_value('Login', 'register_button')
+    register_button = parseConf.get_value("Login", "register_button")
     # 用户名错误定位器
-    username_error_locator = parseConf.get_value('Login', 'username_error_locator')
+    username_error_locator = parseConf.get_value("Login", "username_error_locator")
     # 密码错误定位器
-    password_error_locator = parseConf.get_value('Login', 'password_error_locator')
+    password_error_locator = parseConf.get_value("Login", "password_error_locator")
     # 记住用户复选框
-    remember_user_checkbox = parseConf.get_value('Login', 'remember_user_checkbox')
+    remember_user_checkbox = parseConf.get_value("Login", "remember_user_checkbox")
     # 忘记密码按钮
-    forget_password_button = parseConf.get_value('Login', 'forget_password_button')
+    forget_password_button = parseConf.get_value("Login", "forget_password_button")
     # 用户page获取账户信息定位器
-    account_locator = parseConf.get_value('Login', 'account_locator')
+    account_locator = parseConf.get_value("Login", "account_locator")
+
+    def __init__(self, driver, timeout=10):
+        super().__init__(driver, timeout)
 
     def open_url(self):
         return self.load_url(self.login_url)
@@ -66,9 +69,7 @@ class LoginPage(BasePage):
         self.click_login_button()
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     driver = webdriver.Chrome(service=Service(CHROME_PATH))
     login_page = LoginPage(driver)
-    login_page.login('qwx13057573527', 'qwx#125617')
+    login_page.login("qwx13057573527", "qwx#125617")
