@@ -10,7 +10,7 @@ DATE_TIME = datetime.now().strftime("%Y-%m-%d")
 # 项目根目录
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 屏幕截图存放目录
-SCREENSHOT_DIR = os.path.join(ROOT_DIR, "report", "image")
+IMAGE_DIR = os.path.join(ROOT_DIR, "report", "image")
 # 测试报告目录
 REPORT_DIR = os.path.join(ROOT_DIR, "report", "TestReport")
 # 测试数据目录
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     print("CURRENT_TIME:{}".format(CURRENT_TIME))
     print("DATE_TIME:{}".format(DATE_TIME))
     print("ROOT_DIR:{}".format(ROOT_DIR))
-    print("SCREENSHOT_DIR:{}".format(SCREENSHOT_DIR))
+    print("IMAGE_DIR:{}".format(IMAGE_DIR))
     print("REPORT_DIR:{}".format(REPORT_DIR))
     print("DATA_DIR:{}".format(DATA_DIR))
     print("CURRENT_PATH:{}".format(CURRENT_PATH))

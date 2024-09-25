@@ -62,6 +62,9 @@ class LoginPage(BasePage):
     def get_account_text(self):
         return self.get_element_text(*self.account_locator)
 
+    def get_login_err_text(self):
+        return self.get_username_err_text() or self.get_password_err_text()
+
     def login(self, username, password):
         self.open_url()
         self.input_username(username)

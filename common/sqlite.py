@@ -3,10 +3,9 @@ import sqlite3
 from common.logger import LoggerManager
 from config.conf import SQL_FILE
 from utils.parseConf import ParseConf
-
+from conftest import logger
 
 class SQLManager(object):
-    logger = LoggerManager().get_logger()
     parseConf = ParseConf()
     sql_delete = [sql.strip() for sql in parseConf.get_value('SQL', 'sql_delete').split(",")]
     sql_insert = [parseConf.get_value('SQL', 'sql_insert')]
@@ -17,7 +16,7 @@ class SQLManager(object):
         self.conn = sqlite3.connect(default_file)
         # 创建一个游标
         self.cursor = self.conn.cursor()
-        self.logger.info(f"连接数据库资源，数据库文件:{default_file}")
+        logger.info(f"连接数据库资源，数据库文件:{default_file}")
 
     def __del__(self):
         """对象资源被释放时触发，在对象即将被删除时的最后操作"""
@@ -29,22 +28,22 @@ class SQLManager(object):
         result = None
         try:
             for i in sql_list:
-                self.logger.info(f"执行sql命令:{i}")
+                logger.info(f"执行sql命令:{i}")
                 self.cursor.execute(i)
                 result = self.cursor.fetchall()
-                self.logger.debug(f"执行结果为:{result}")
+                logger.debug(f"执行结果为:{result}")
             # 提交事务
             self.conn.commit()
             return result
         except Exception as e:
-            self.logger.error(f"执行sql出现错误，异常为：{e}")
+            logger.error(f"执行sql出现错误，异常为：{e}")
             raise e
 
     def setup_sql(self):
-        self.logger.info("正在初始化测试数据...")
+        logger.info("正在初始化测试数据...")
         self.execute(self.sql_delete)
         self.execute(self.sql_insert)
-        self.logger.info(f"初始化测试数据完成，初始化数据为:{self.execute(self.sql_select)}")
+        logger.info(f"初始化测试数据完成，初始化数据为:{self.execute(self.sql_select)}")
 
 
 if __name__ == '__main__':

@@ -27,7 +27,7 @@ class LoggerManager:
 
             # 创建FileHandler
             file_handler = logging.FileHandler(log_file, encoding='utf-8')
-            file_handler.setLevel(logging.DEBUG)
+            file_handler.setLevel(logging.INFO)
             file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
             # 添加handler到logger
@@ -35,7 +35,7 @@ class LoggerManager:
 
             # 创建FileHandler
             console_handler = logging.StreamHandler()
-            console_handler.setLevel(logging.DEBUG)
+            console_handler.setLevel(logging.INFO)
             console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
             # 添加handler到logger
