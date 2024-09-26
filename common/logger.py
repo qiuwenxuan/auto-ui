@@ -10,7 +10,7 @@ class LoggerManager:
         @param log_file: str 日志文件的路径
         @param log_level: int 日志记录级别
         """
-        self.logger = logging.getLogger('logger')
+        self.logger = logging.getLogger("logger")
         self.logger.setLevel(log_level)
         self.setup_logger(log_file)
 
@@ -26,9 +26,13 @@ class LoggerManager:
                 os.makedirs(log_dir)
 
             # 创建FileHandler
-            file_handler = logging.FileHandler(log_file, encoding='utf-8')
+            file_handler = logging.FileHandler(log_file, encoding="utf-8")
             file_handler.setLevel(logging.INFO)
-            file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+            file_handler.setFormatter(
+                logging.Formatter(
+                    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                )
+            )
 
             # 添加handler到logger
             self.logger.addHandler(file_handler)
@@ -36,7 +40,11 @@ class LoggerManager:
             # 创建FileHandler
             console_handler = logging.StreamHandler()
             console_handler.setLevel(logging.INFO)
-            console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+            console_handler.setFormatter(
+                logging.Formatter(
+                    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                )
+            )
 
             # 添加handler到logger
             self.logger.addHandler(console_handler)
@@ -50,8 +58,9 @@ class LoggerManager:
         return self.logger
 
 
-if __name__ == '__main__':
-    logger = LoggerManager().get_logger()
+logger = LoggerManager().get_logger()
+
+if __name__ == "__main__":
     logger.debug("this is a debug log...")
     logger.info("this is a info log...")
     logger.warning("this is a warning log...")

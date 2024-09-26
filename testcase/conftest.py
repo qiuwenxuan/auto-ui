@@ -1,6 +1,6 @@
 import pytest
-
 from page.loginPage import LoginPage
+
 
 
 # 初始化所有页面的driver

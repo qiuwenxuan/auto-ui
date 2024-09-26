@@ -1,20 +1,22 @@
 from time import sleep
-
 import allure
-from selenium.common import TimeoutException, NoAlertPresentException
+from typing import List, Union
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait as WD
 from conftest import logger
-from utils.clipboard import ClipBoard
-from utils.keyboard import KeyBoard
+from utils.clipBoard import ClipBoard
+from utils.keyBoard import KeyBoard
 
 
 class BasePage:
 
     def __init__(self, driver, timeout=10):
-        self.driver = driver
-        self.outTime = timeout
+        self.driver: WebDriver = driver
+        self.outTime: int = timeout
 
         self.byDict = {
             "id": By.ID,
@@ -24,163 +26,177 @@ class BasePage:
             "link_text": By.LINK_TEXT,
         }
 
-    @allure.step("页面寻找单个元素")
-    def find_element(self, by, locator):
+    def wait_for(self, condition, by=None, locator=None) -> WebElement:
+        """
+        显示等待通用方法
+        @param condition: 期望条件方法,如可见EC.visibility_of_element_located、可点击EC.element_to_be_clickable等
+        @param by: 查找元素的方式，例如 By.ID, By.XPATH 等
+        @param locator: 要查找的元素的定位值
+        @return: WebDriverWait.until() 返回的是等待条件成立时的 WebElement 对象。
+        """
         try:
             element = WD(self.driver, self.outTime).until(
-                lambda x: x.find_element(self.byDict[by], locator)
+                condition((self.byDict[by], locator))
             )
-            logger.info(f"寻找到元素：【{locator}】")
-        except TimeoutException:
-            logger.error(f"寻找元素：【{locator}】超时，元素未找到")
-            return None
-        else:
             return element
-
-    @allure.step("页面寻找多个元素")
-    def find_elements(self, by, locator):
-        try:
-            element = WD(self.driver, self.outTime).until(
-                lambda x: x.find_elements(self.byDict[by], locator)
-            )
-            logger.info(f"寻找到多个元素：【{locator}】")
         except TimeoutException:
-            logger.error(f"寻找到多个元素【{locator}】超时,元素未找到")
+            logger.warning(f"元素显示等待超时:{locator}")
             return None
-        else:
+
+    def find_element(self, by, locator) -> WebElement:
+        """页面寻找单个元素"""
+        element = self.wait_for(
+            EC.visibility_of_element_located, by, locator
+        )  # visibility_of_element_located 判断单个元素是否可见
+        if element:
+            logger.info(f"寻找到元素:{locator}")
             return element
-
-    @allure.step("获取alert弹窗文本")
-    def get_alert_text(self):
-        alert = self.is_alert()
-        if alert:
-            logger.info(f"获取弹窗对象文本信息为:{alert.text}")
-            return alert.text
         else:
-            logger.error("未获取到弹窗的文本信息")
+            logger.warning(f"寻找元素为空:{locator}")
             return None
 
-    @allure.step("获取目标元素的文本信息")
-    def get_element_text(self, by, locator, name=None):
-        # name是获取元素的属性，例如 "class", "href", "id" 等。get_attribute("href")
+    def find_elements(self, by, locator) -> List[WebElement]:
+        """页面寻找多个元素"""
+        element = self.wait_for(
+            EC.visibility_of_all_elements_located, by, locator
+        )  # visibility_of_all_elements_located 等待指定的多个元素可见
+        if element:
+            logger.info(f"寻找到多个元素:{locator}")
+            return element
+        else:
+            logger.warning(f"寻找多个元素为空:{locator}")
+            return None
+
+    def get_element_text(self, by, locator) -> str:
+        """获取元素文本值"""
         element = self.find_element(by, locator)
-        if element and name:
-            # name属性不为null，表示获取元素属性信息
-            value = element.get_attribute(name)
-            logger.info(f"获取元素【{locator}】的{name}属性，值为：{value}")
-            return value
-        elif element and not name:
+        if element:
             text = element.text
-            logger.info(f"获取元素text文本信息，值为：{text}")
+            logger.info(f"获取到元素文本值: {text}")
             return text
         else:
-            logger.error(f"目标元素属性未获取到")
+            logger.warning(f"无法获取元素文本，元素未找到: {locator}")
             return None
 
-    @allure.step("判断元素是否可见")
-    def is_element_visible(self, by, locator):
-        try:
-            WD(self.driver, self.outTime).until(
-                EC.visibility_of_element_located((self.byDict[by], locator))
-            )
-            logger.info(f"元素【{locator}】可见")
-        except TimeoutException:
-            logger.info(f"元素【{locator}】不可见")
-            return False
+    def get_element_attribute(self, by, locator, attr) -> str:
+        """
+        获取元素属性
+        @param attr: 元素属性类型,例如 "class", "href", "id" 等 get_attribute("href")
+        """
+        element = self.find_element(by, locator)
+        if element:
+            attribute = element.get_attribute(attr)
+            logger.info(f"获取到元素属性值: {attribute}")
+            return attribute
         else:
-            return True
+            logger.warning(f"无法获取元素属性值，元素未找到: {locator}")
+            return None
 
-    @allure.step("判断元素是否可点击")
-    def is_click(self, by, locator):
-        try:
-            element = WD(self.driver, self.outTime).until(
-                EC.element_to_be_clickable((self.byDict[by], locator))
-            )
-            logger.info(f"元素【{locator}】可被点击")
-        except TimeoutException:
-            logger.info(f"元素【{locator}】不可被点击")
-            return False
-        else:
+    def is_visible(self, by, locator) -> Union[bool, WebElement]:
+        """判断元素是否可见"""
+        element = self.wait_for(
+            EC.visibility_of_element_located, by, locator
+        )  # visibility_of_element_located 等待指定元素可见
+        if element:
+            logger.info(f"元素可见：{locator}")
             return element
-
-    @allure.step("判断是否有弹窗,如果有则返回弹窗对象")
-    def is_alert(self):
-        try:
-            alert = WD(self.driver, self.outTime).until(EC.alert_is_present())
-            logger.info("该页面检测到弹窗")
-        except (TimeoutException, NoAlertPresentException):
-            logger.error("该页面未检测到弹窗")
-            return None
         else:
+            logger.warning(f"元素不可见：{locator}")
+            return False
+
+    def is_click(self, by, locator) -> Union[bool, WebElement]:
+        """判断元素是否可被点击"""
+        element = self.wait_for(
+            EC.element_to_be_clickable, by, locator
+        )  # element_to_be_clickable元素可被点击
+        if element:
+            logger.info(f"元素可被点击:{locator}")
+            return element
+        else:
+            logger.warning(f"等待元素超时，元素不可被点击：{locator}")
+            return False
+
+    def is_alert(self) -> Union[bool, WebElement]:
+        """判断是否存在弹窗"""
+        alert = self.wait_for(EC.alert_is_present())
+        if alert:
+            logger.info("页面检测到弹窗")
             return alert
-
-    @allure.step("页面切换frame")
-    def switch_frame(self, by=None, locator=None):
-        if by and locator:
-            logger.info(f"切换到frame: 【{locator}】")
-            WD(self.driver, self.outTime).until(
-                EC.frame_to_be_available_and_switch_to_it((self.byDict[by], locator))
-            )
         else:
-            logger.info("切换回默认frame")
-            WD(self.driver, self.outTime).until(self.driver.switch_to.default_content())
+            logger.warning("页面未检测到弹窗")
+            return False
 
-    @allure.step("打开指定url")
+    def switch_frame(self, by=None, locator=None):
+        """切换frame"""
+        if by and locator:
+            self.wait_for(EC.frame_to_be_available_and_switch_to_it, by, locator)
+            logger.info(f"切换到frame:{locator}")
+        else:
+            self.driver.switch_to.default_content()
+            logger.warning("切换回默认frame")
+
     def load_url(self, url):
-        logger.info(f"打开url:{url}")
+        """打开url"""
         self.driver.get(url)
+        logger.info(f"打开url:{url}")
 
-    @allure.step("对输入框输入文本内容")
+    def clear(self, by, locator):
+        """清空输入框"""
+        element = self.find_element(by, locator)
+        if element:
+            element.clear()
+            logger.info(f"清空输入框：{locator}")
+        else:
+            logger.warning(f"未找到需要清空的输入框：{locator}")
+
     def send_keys(self, by, locator, value=""):
-        element = self.clear(by, locator)
+        """输入文本内容"""
+        element = self.find_element(by, locator)
         if element:
             element.send_keys(value)
-            logger.info(f"对输入框【{locator}】输入内容：{value}")
+            logger.info(f"输入框输入内容：{locator} 输入：{value}")
         else:
-            logger.error(f"输入框元素未找到,输入内容失败")
+            logger.warning(f"输入框输入内容失败：{locator}")
 
-    @allure.step("清空输入框")
-    def clear(self, by, locator):
-        element = self.find_element(by, locator)
-        element.clear()
-        logger.info(f"清空输入框：【{locator}】")
-        return element
-
-    @allure.step("点击目标元素")
     def click(self, by, locator):
-        element = self.is_click(by, locator)
+        """点击事件"""
+        element = self.wait_for(
+            EC.element_to_be_clickable, by, locator
+        )  # element_to_be_clickable元素可被点击
         if element:
             element.click()
-        logger.info(f"点击目标元素:【{locator}】")
+            logger.info(f"点击元素:{locator}")
+        else:
+            logger.warning(f"元素点击失败：{locator}")
 
-    @allure.step("页面强制等待")
     def sleep(self, num=0):
+        """强制等待"""
         logger.info(f"页面强制等待{num}s")
         sleep(num)
 
-    @allure.step("选择复选框")
     def select_checkbox(self, by, locator):
+        """选择复选框"""
         checkbox = self.find_element(by, locator)
         if not checkbox.is_selected():
             self.click(by, locator)
-        logger.info(f"选择复选框：【{locator}】")
+        logger.info(f"选择复选框：{locator}")
 
-    @allure.step("取消复选框")
     def deselect_checkbox(self, by, locator):
+        """取消复选框"""
         checkbox = self.find_element(by, locator)
         if checkbox.is_selected():
             self.click(by, locator)
-            logger.info(f"取消复选框：【{locator}】")
+            logger.info(f"取消复选框：{locator}")
 
-    @allure.step("鼠标点击ctrl+v粘贴")
     def ctrl_v(self, value):
+        """ctrl+v 粘贴自定义文本"""
         ClipBoard.set_text(value)
         self.sleep(3)
         KeyBoard.two_keys("ctrl", "v")
         logger.info(f"键盘输入ctrl+v粘贴文本：{value}")
 
-    @allure.step("鼠标点击enter回车")
     def enter_key(self):
+        """鼠标点击enter回车"""
         KeyBoard.one_key("enter")
         logger.info(f"鼠标点击enter回车")
 

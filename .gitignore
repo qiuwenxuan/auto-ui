@@ -163,3 +163,8 @@ cython_debug/
 .idea/
 
 *.png
+
+# 忽略 report/TestReport 目录下的所有文件
+/report/TestReport/*
+/report/log/*
+/report/result/*

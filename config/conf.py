@@ -13,8 +13,14 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IMAGE_DIR = os.path.join(ROOT_DIR, "report", "image")
 # 测试报告目录
 REPORT_DIR = os.path.join(ROOT_DIR, "report", "TestReport")
+# allure json文件生成目录
+RESULT_DIR = os.path.join(ROOT_DIR, "report", "result")
 # 测试数据目录
 DATA_DIR = os.path.join(ROOT_DIR, "data")
+# 测试用例目录
+CASE_DIR = os.path.join(ROOT_DIR, "testcase")
+# 日志测试目录
+LOG_DIR = os.path.join(ROOT_DIR, "report", "log")
 
 # 当前脚本路径
 CURRENT_PATH = os.path.abspath(__file__)
