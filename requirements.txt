@@ -1,0 +1,6 @@
+# auto-ui项目依赖
+pytest==8.3.3
+allure-pytest==2.13.5
+allure-python-commons==2.13.5
+selenium==4.24.0
+webdriver-manager==4.0.2
