@@ -13,8 +13,9 @@ class FileUtils(object):
             logger.debug(f"目录 {folder_path} 不存在")
             return
 
-        # root, dirs, files分别代表当前路径、该路径下的子目录和文件
-        for root, dirs, files in os.walk(folder_path):
+        # 从底向上遍历
+        for root, dirs, files in os.walk(folder_path, topdown=False):
+            # 删除所有文件
             for file in files:
                 file_path = os.path.join(root, file)
                 try:
@@ -22,6 +23,15 @@ class FileUtils(object):
                     logger.debug(f"已删除文件: {file_path}")
                 except Exception as e:
                     logger.error(f"删除 {file_path} 失败。原因: {e}")
+
+            # 删除所有子文件夹
+            for dir in dirs:
+                dir_path = os.path.join(root, dir)
+                try:
+                    os.rmdir(dir_path)  # 删除空文件夹
+                    logger.debug(f"已删除文件夹: {dir_path}")
+                except Exception as e:
+                    logger.error(f"删除文件夹 {dir_path} 失败。原因: {e}")
 
     @staticmethod
     def clean_image_data():
