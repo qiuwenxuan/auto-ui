@@ -6,7 +6,7 @@ from page.loginPage import LoginPage
 
 
 # epic->feature->story->title->step
-@allure.epic("auto-ui")  # 项目名
+@allure.epic("自动化项目")  # 项目名
 @allure.feature("登录模块")  # 模块名
 @allure.story("登录")  # 子模块名
 class TestLogin(object):
